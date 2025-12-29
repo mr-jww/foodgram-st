@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
-from users.serializers import CustomUserSerializer
+from users.serializers import CustomUserSerializer, CustomUser
 from .fields import Base64ImageField
 
 
@@ -161,3 +161,28 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class UserSubscriptionsSerializer(CustomUserSerializer):
+    """Сериализатор для вывода подписок пользователя."""
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomUser
+        fields = (
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'is_subscribed', 'recipes', 'recipes_count'
+        )
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        queryset = obj.recipes.all()
+        if limit:
+            queryset = queryset[:int(limit)]
+        return ShortRecipeSerializer(queryset, many=True).data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
+

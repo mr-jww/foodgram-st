@@ -1,7 +1,7 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from .models import CustomUser
+from .models import CustomUser, Subscribe
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -27,4 +27,8 @@ class CustomUserSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        return False
+        """Проверка подписки."""
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Subscribe.objects.filter(user=user, author=obj).exists()

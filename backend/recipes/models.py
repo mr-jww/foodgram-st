@@ -44,7 +44,7 @@ class Tag(models.Model):
         ]
     )
     slug = models.SlugField(
-        'Уникальный слаг',
+        'Уникальный заголовок',
         max_length=200,
         unique=True,
     )
