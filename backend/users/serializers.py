@@ -6,7 +6,7 @@ from .models import CustomUser, Subscribe
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     """Сериализатор для регистрации пользователя."""
-    
+
     class Meta:
         model = CustomUser
         fields = (

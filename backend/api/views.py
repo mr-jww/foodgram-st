@@ -1,25 +1,22 @@
-from djoser.views import UserViewSet
-from users.models import CustomUser, Subscribe
-from .serializers import UserSubscriptionsSerializer, CustomUserSerializer
-
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from users.models import CustomUser, Subscribe
 
-from recipes.models import (
-    Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingCart, Tag
-)
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorOrReadOnly
-from .serializers import (
-    IngredientSerializer, RecipeReadSerializer, RecipeWriteSerializer,
-    ShortRecipeSerializer, TagSerializer
-)
+from .serializers import (CustomUserSerializer, IngredientSerializer,
+                          RecipeReadSerializer, RecipeWriteSerializer,
+                          ShortRecipeSerializer, TagSerializer,
+                          UserSubscriptionsSerializer)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -106,7 +103,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             model.objects.create(user=user, recipe=recipe)
             serializer = ShortRecipeSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         if self.request.method == 'DELETE':
             obj = model.objects.filter(user=user, recipe__id=pk)
             if obj.exists():

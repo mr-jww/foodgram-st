@@ -1,8 +1,8 @@
 from django.db import transaction
-from rest_framework import serializers
-
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
-from users.serializers import CustomUserSerializer, CustomUser
+from rest_framework import serializers
+from users.serializers import CustomUser, CustomUserSerializer
+
 from .fields import Base64ImageField
 
 
@@ -101,7 +101,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'ingredients': 'Нужен хотя бы один ингредиент!'}
             )
-        
+
         ingredient_list = [item['id'] for item in ingredients]
         if len(ingredient_list) != len(set(ingredient_list)):
             raise serializers.ValidationError(
@@ -135,7 +135,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         tags = validated_data.pop('tags', None)
         ingredients = validated_data.pop('ingredients', None)
-        
+
         instance = super().update(instance, validated_data)
 
         if tags is not None:
@@ -146,7 +146,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             self.create_ingredients(ingredients, instance)
 
         return instance
-    
+
     def to_representation(self, instance):
         # После создания/обновления возвращаем данные в формате ReadSerializer
         request = self.context.get('request')
@@ -185,4 +185,3 @@ class UserSubscriptionsSerializer(CustomUserSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
-
