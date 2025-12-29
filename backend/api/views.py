@@ -111,7 +111,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response({'errors': 'Рецепт уже удален!'},
                             status=status.HTTP_400_BAD_REQUEST)
-
+        return None
 
 class CustomUserViewSet(UserViewSet):
     """Вьюсет для работы с пользователями и подписками."""
@@ -170,3 +170,4 @@ class CustomUserViewSet(UserViewSet):
                 {'errors': 'Вы не были подписаны на этого пользователя'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        return None
