@@ -113,6 +113,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         return None
 
+
 class CustomUserViewSet(UserViewSet):
     """Вьюсет для работы с пользователями и подписками."""
     queryset = CustomUser.objects.all()
